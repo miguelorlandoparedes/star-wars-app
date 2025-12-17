@@ -21,7 +21,7 @@ class CharactersView extends StatelessWidget {
       builder: (context, state, _) {
         return CardsList(
           characters: state.characters
-              .map((c) => CharacterCard(character: c))
+              .map((c) => CharacterCard(key: ValueKey(c.url), character: c))
               .toList(),
           scrollController: state.scrollController,
         );
