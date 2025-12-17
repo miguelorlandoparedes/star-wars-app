@@ -73,7 +73,7 @@ class CardsList extends StatelessWidget {
           itemBuilder: (context, index) {
             if (index >= characters.length) {
               return Align(
-                key: characters[index].key,
+                key: ValueKey('skeleton_$index'),
                 alignment: Alignment.topCenter,
                 child: CharacterCardSkeleton(),
               );
