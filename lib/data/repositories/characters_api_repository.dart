@@ -2,7 +2,7 @@ import 'package:desafio_entrevista/data/api/characters_api.dart';
 import 'package:desafio_entrevista/data/models/page_response_model.dart';
 import 'package:desafio_entrevista/data/repositories/characters_repository.dart';
 
-class CharactersApiRepository extends CharactersRepository {
+class CharactersApiRepository implements CharactersRepository {
   final CharactersApi api;
 
   CharactersApiRepository(this.api);

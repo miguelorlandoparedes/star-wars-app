@@ -2,7 +2,7 @@ import 'package:desafio_entrevista/data/api/mock_data.dart';
 import 'package:desafio_entrevista/data/models/page_response_model.dart';
 import 'package:desafio_entrevista/data/repositories/characters_repository.dart';
 
-class CharactersMockRepository extends CharactersRepository {
+class CharactersMockRepository implements CharactersRepository {
   CharactersMockRepository();
 
   @override

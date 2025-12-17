@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:desafio_entrevista/data/models/character_model.dart';
 import 'package:desafio_entrevista/data/repositories/characters_repository.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,10 @@ class CharactersProvider extends ChangeNotifier {
   bool _isSearching = false;
   String? _error;
   String _query = '';
+
+  // Debounce timer para evitar búsquedas múltiples
+  Timer? _searchDebounceTimer;
+  String? _lastSearchedQuery;
 
   List<CharacterModel> get characters {
     if (_query.isEmpty) {
@@ -70,24 +76,30 @@ class CharactersProvider extends ChangeNotifier {
     searchController.clear();
     _searchedCharacters.clear();
     _query = '';
+    _lastSearchedQuery = null;
+    _searchDebounceTimer?.cancel();
     notifyListeners();
   }
 
   Future<void> onQueryChanged(String value) async {
     final q = value.trim();
+    _query = q;
+
+    // Cancelar búsqueda anterior
+    _searchDebounceTimer?.cancel();
 
     if (q.isEmpty) {
-      _query = '';
-      _searchedCharacters.clear();
       _searchPage = 1;
+      _searchedCharacters.clear();
+      _lastSearchedQuery = null;
       notifyListeners();
       return;
     }
 
-    _query = q;
-    _searchPage = 1;
-    await _search();
-    notifyListeners();
+    _searchDebounceTimer = Timer(const Duration(milliseconds: 500), () async {
+      _searchPage = 1;
+      await _search();
+    });
   }
 
   Future<void> loadInitial() async {
@@ -108,8 +120,12 @@ class CharactersProvider extends ChangeNotifier {
   }
 
   Future<void> _search() async {
-    if (_searchPage == 1) {
-      _searchedCharacters.clear();
+    // Validar que la búsqueda actual no ha cambiado
+    if (_query != _lastSearchedQuery) {
+      _lastSearchedQuery = _query;
+      if (_searchPage == 1) {
+        _searchedCharacters.clear();
+      }
     }
 
     _isLoading = true;
@@ -117,8 +133,12 @@ class CharactersProvider extends ChangeNotifier {
 
     try {
       final response = await repository.search(_query, _searchPage);
-      _searchedCharacters.addAll(response.results);
-      _hasMore = response.next != null;
+
+      // Verificar que la respuesta corresponde a la búsqueda actual
+      if (_query == _lastSearchedQuery) {
+        _searchedCharacters.addAll(response.results);
+        _hasMore = response.next != null;
+      }
     } catch (e) {
       _error = e.toString();
       debugPrint(_error);
@@ -163,6 +183,7 @@ class CharactersProvider extends ChangeNotifier {
   void dispose() {
     scrollController.dispose();
     searchController.dispose();
+    _searchDebounceTimer?.cancel();
     super.dispose();
   }
 }
