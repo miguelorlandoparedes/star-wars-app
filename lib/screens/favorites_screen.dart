@@ -1,5 +1,6 @@
+import 'package:desafio_entrevista/data/models/character_model.dart';
 import 'package:desafio_entrevista/providers/characters_provider.dart';
-import 'package:desafio_entrevista/widgets/cards/cards_view.dart';
+import 'package:desafio_entrevista/widgets/cards/cards_list.dart';
 import 'package:desafio_entrevista/widgets/cards/character_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,10 +10,20 @@ class FavoritesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CharactersProvider>(
-      builder: (context, provider, _) {
-        return CardsView(
-          characters: provider.favoriteCharacters
+    return Selector<
+      CharactersProvider,
+      ({
+        List<CharacterModel> favoriteCharacters,
+        ScrollController scrollController,
+      })
+    >(
+      selector: (context, provider) => (
+        favoriteCharacters: provider.favoriteCharacters,
+        scrollController: provider.scrollController,
+      ),
+      builder: (context, state, _) {
+        return CardsList(
+          characters: state.favoriteCharacters
               .map((c) => CharacterCard(character: c))
               .toList(),
           scrollController: null,

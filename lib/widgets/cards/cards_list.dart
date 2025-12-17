@@ -4,8 +4,8 @@ import 'package:desafio_entrevista/widgets/cards/custom_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CardsView extends StatelessWidget {
-  const CardsView({
+class CardsList extends StatelessWidget {
+  const CardsList({
     super.key,
     required this.characters,
     required this.scrollController,

@@ -29,7 +29,7 @@ class CharactersProvider extends ChangeNotifier {
     if (_query.isEmpty) {
       return _characters;
     }
-    return getFilteredCharacters();
+    return _searchedCharacters;
   }
 
   List<CharacterModel> get favoriteCharacters => _favoriteCharacters;
@@ -38,6 +38,13 @@ class CharactersProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isSearching => _isSearching;
   String get query => _query;
+
+  bool get isEmpty {
+    if (_isSearching) {
+      return _searchedCharacters.isEmpty;
+    }
+    return _characters.isEmpty;
+  }
 
   bool isFavorite(CharacterModel character) {
     return _favoriteCharacters.contains(character);
@@ -61,21 +68,26 @@ class CharactersProvider extends ChangeNotifier {
   void stopSearch() {
     _isSearching = false;
     searchController.clear();
+    _searchedCharacters.clear();
     _query = '';
     notifyListeners();
   }
 
-  void onQueryChanged(String value) {
-    _query = value;
+  Future<void> onQueryChanged(String value) async {
+    final q = value.trim();
+
+    if (q.isEmpty) {
+      _query = '';
+      _searchedCharacters.clear();
+      _searchPage = 1;
+      notifyListeners();
+      return;
+    }
+
+    _query = q;
+    _searchPage = 1;
+    await _search();
     notifyListeners();
-  }
-
-  List<CharacterModel> getFilteredCharacters() {
-    if (_query.isEmpty) return _characters;
-
-    return _characters.where((c) {
-      return c.name.toLowerCase().contains(_query.toLowerCase());
-    }).toList();
   }
 
   Future<void> loadInitial() async {
@@ -96,16 +108,15 @@ class CharactersProvider extends ChangeNotifier {
   }
 
   Future<void> _search() async {
+    if (_searchPage == 1) {
+      _searchedCharacters.clear();
+    }
+
     _isLoading = true;
     notifyListeners();
 
     try {
       final response = await repository.search(_query, _searchPage);
-
-      if (_page == 1) {
-        _searchedCharacters.clear();
-      }
-
       _searchedCharacters.addAll(response.results);
       _hasMore = response.next != null;
     } catch (e) {

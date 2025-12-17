@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomBottomNavBar extends StatelessWidget {
-  const CustomBottomNavBar({
+class CustomBottomAppBar extends StatelessWidget {
+  const CustomBottomAppBar({
     super.key,
     required this.onTap,
     required this.selectedIndex,

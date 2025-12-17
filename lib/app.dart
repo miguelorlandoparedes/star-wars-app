@@ -23,9 +23,7 @@ class StarWarsApp extends StatelessWidget {
           bodySmall: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Colors.white),
         ),
-
         dividerTheme: DividerThemeData(color: Colors.grey.shade700),
-
         colorScheme: ColorScheme(
           onPrimary: Color(0xfff5c542),
           onSecondary: Color(0xFFC1121F),

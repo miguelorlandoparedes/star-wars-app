@@ -70,7 +70,7 @@ class CharacterCard extends StatelessWidget {
                 _InfoRow(
                   label: 'Skin',
                   value: character.skinColor,
-                  icon: Icons.brush,
+                  icon: Icons.person_2_outlined,
                 ),
               ],
             ),
@@ -88,13 +88,12 @@ class _FavoriteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CharactersProvider>(
-      builder: (context, provider, _) {
-        final isFavorite = provider.isFavorite(character);
-
+    return Selector<CharactersProvider, bool>(
+      selector: (_, provider) => provider.isFavorite(character),
+      builder: (context, isFavorite, _) {
         return IconButton(
           onPressed: () {
-            provider.toggleFavorite(character);
+            context.read<CharactersProvider>().toggleFavorite(character);
           },
           icon: AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),

@@ -23,9 +23,14 @@ class _CharactersScreenState extends State<CharactersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CharactersProvider>(
-      builder: (context, provider, _) {
-        if (provider.error != null) {
+    return Selector<
+      CharactersProvider,
+      ({String? error, bool isLoading, bool isEmpty})
+    >(
+      selector: (_, p) =>
+          (error: p.error, isLoading: p.isLoading, isEmpty: p.isEmpty),
+      builder: (context, state, _) {
+        if (state.error != null) {
           return Center(
             child: CustomCard(
               child: Text(
@@ -36,11 +41,11 @@ class _CharactersScreenState extends State<CharactersScreen> {
           );
         }
 
-        if (provider.isLoading && provider.characters.isEmpty) {
-          return CharactersViewSkeleton();
+        if (state.isLoading && state.isEmpty) {
+          return const CharactersViewSkeleton();
         }
 
-        return CharactersView();
+        return const CharactersView();
       },
     );
   }

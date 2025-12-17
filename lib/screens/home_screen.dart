@@ -1,10 +1,11 @@
 import 'package:desafio_entrevista/providers/characters_provider.dart';
 import 'package:desafio_entrevista/screens/characters_screen.dart';
 import 'package:desafio_entrevista/screens/favorites_screen.dart';
-import 'package:desafio_entrevista/widgets/custom_bottom_nav_bar.dart';
-import 'package:desafio_entrevista/widgets/custom_nav_menu.dart';
-import 'package:desafio_entrevista/widgets/custom_search_button.dart';
-import 'package:desafio_entrevista/widgets/mobile_app_bar.dart';
+import 'package:desafio_entrevista/utils/custom_fab_location.dart';
+import 'package:desafio_entrevista/utils/layout.dart';
+import 'package:desafio_entrevista/widgets/app_bar/custom_app_bar.dart';
+import 'package:desafio_entrevista/widgets/bottom_app_bar/custom_bottom_app_bar.dart';
+import 'package:desafio_entrevista/widgets/bottom_app_bar/custom_search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,15 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  bool _isDesktop(BoxConstraints constraints) {
-    return constraints.maxWidth >= 900;
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isDesktop = _isDesktop(constraints);
+        final isDesktop = LayoutUtils.isDesktopLayout(constraints);
         return Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
@@ -51,17 +48,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? _DesktopPageContainer(
                     selectedIndex: _selectedIndex,
                     pages: _pages,
-                    onSearch: () {},
-                    onTabSelected: _onTabSelected,
                   )
                 : Padding(
                     padding: EdgeInsetsGeometry.only(bottom: 40),
                     child: _pages[_selectedIndex],
                   ),
-            appBar: isDesktop ? null : MobileAppBar(),
+            appBar: CustomAppBar(
+              currentIndex: _selectedIndex,
+              onTabSelected: _onTabSelected,
+            ),
             bottomNavigationBar: isDesktop
                 ? null
-                : CustomBottomNavBar(
+                : CustomBottomAppBar(
                     onTap: _onTabSelected,
                     selectedIndex: _selectedIndex,
                   ),
@@ -75,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
             floatingActionButtonLocation: isDesktop
                 ? null
                 : CustomFloatingActionButtonLocation(),
-            // : FloatingActionButtonLocation.centerDocked,
           ),
         );
       },
@@ -87,37 +84,24 @@ class _DesktopPageContainer extends StatelessWidget {
   const _DesktopPageContainer({
     required this.selectedIndex,
     required this.pages,
-    required this.onSearch,
-    required this.onTabSelected,
   });
 
   final int selectedIndex;
   final List<Widget> pages;
-  final VoidCallback onSearch;
-  final void Function(int) onTabSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomNavMenu(
-          currentIndex: selectedIndex,
-          onTabSelected: onTabSelected,
-        ),
-        Expanded(
-          child: Consumer<CharactersProvider>(
-            builder: (context, provider, _) {
-              return provider.scrollController.hasClients
-                  ? Scrollbar(
-                      controller: provider.scrollController,
-                      thumbVisibility: true,
-                      child: pages[selectedIndex],
-                    )
-                  : pages[selectedIndex];
-            },
-          ),
-        ),
-      ],
+    return Selector<CharactersProvider, ScrollController>(
+      selector: (context, provider) => provider.scrollController,
+      builder: (context, scrollController, _) {
+        return scrollController.hasClients
+            ? Scrollbar(
+                controller: scrollController,
+                thumbVisibility: true,
+                child: pages[selectedIndex],
+              )
+            : pages[selectedIndex];
+      },
     );
   }
 }
