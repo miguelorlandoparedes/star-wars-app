@@ -131,7 +131,11 @@ class _InfoRow extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.white),
           SizedBox(width: 12),
-          Text(value, style: Theme.of(context).textTheme.bodyMedium),
+          Text(
+            value.replaceAll(',', '\n'),
+            style: Theme.of(context).textTheme.bodyMedium,
+            overflow: TextOverflow.visible,
+          ),
         ],
       ),
     );
