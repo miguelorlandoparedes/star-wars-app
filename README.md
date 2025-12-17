@@ -1,16 +1,13 @@
 # desafio_entrevista
 
-A new Flutter project.
+# Url del repositorio de la aplicacion: https://github.com/miguelorlandoparedes/star-wars-app.git
 
-## Getting Started
+# Instrucciones para clonar el proyecto:
 
-This project is a starting point for a Flutter application.
+# git clone https://github.com/miguelorlandoparedes/star-wars-app.git
 
-A few resources to get you started if this is your first Flutter project:
+# Instrucciones para ejecutar el proyecto
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# En un terminal en la raíz del proyecto, ejecutar el comando `flutter run`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Escoger el dispositivo donde se va a ejecutar el programa, de preferencia chrome o android
