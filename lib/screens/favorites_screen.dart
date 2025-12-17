@@ -26,7 +26,7 @@ class FavoritesScreen extends StatelessWidget {
           characters: state.favoriteCharacters
               .map((c) => CharacterCard(key: ValueKey(c.url), character: c))
               .toList(),
-          scrollController: null,
+          scrollController: state.scrollController,
         );
       },
     );

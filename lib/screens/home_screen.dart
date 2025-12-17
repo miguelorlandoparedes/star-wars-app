@@ -91,10 +91,24 @@ class _DesktopPageContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<CharactersProvider, ScrollController>(
-      selector: (context, provider) => provider.scrollController,
-      builder: (context, scrollController, _) {
-        return scrollController.hasClients
+    return Selector<
+      CharactersProvider,
+      ({ScrollController controller, int favoritesCount})
+    >(
+      selector: (context, provider) => (
+        controller: provider.scrollController,
+        favoritesCount: provider.favoriteCharacters.length,
+      ),
+      builder: (context, state, _) {
+        final scrollController = state.controller;
+        final favoritesCount = state.favoritesCount;
+
+        final isEmptyFavoritesPage = selectedIndex == 1 && favoritesCount == 0;
+
+        final shouldWrapWithScrollbar =
+            scrollController.hasClients && !isEmptyFavoritesPage;
+
+        return shouldWrapWithScrollbar
             ? Scrollbar(
                 controller: scrollController,
                 thumbVisibility: true,
